@@ -1,15 +1,17 @@
 {
-  "name": "@faigle/node-red-contrib-_template_",
-  "version": "0.1.14",
-  "description": "Template/Example node for Node-Red",
+  "name": "@faigle/node-red-contrib-ollama",
+  "version": "0.1.1",
+  "description": "Ollama integration node for Node-Red",
   "keywords": [
-    "node-red"
+    "node-red",
+    "ollama",
+    "ai"
   ],
   "private": false,
   "license": "MIT",
   "node-red": {
     "nodes": {
-      "_template_": "src/_template_.js"
+      "ollama": "src/ollama.js"
     }
   },
   "devDependencies": {

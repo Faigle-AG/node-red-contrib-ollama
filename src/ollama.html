@@ -1,0 +1,101 @@
+<script type="text/javascript">
+    RED.nodes.registerType('ollama', {
+        category: 'ai processing',
+        color: '#a6bbcf',
+        defaults: {
+            name: { value: '' },
+            host: { value: 'http://localhost:11434', required: true },
+            model: { value: 'llama3', required: true },
+            promptTemplate: { value: '' },
+            inputProperty: { value: 'payload', required: true },
+            outputProperty: { value: 'payload', required: true },
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: 'font-awesome/fa-commenting-o',
+        label: function () {
+            return this.name || 'ollama';
+        },
+        oneditprepare: function () {
+            $('#node-input-inputProperty').typedInput({
+                default: 'msg',
+                types: ['msg', 'flow', 'global', 'str', 'jsonata', 'env'],
+            });
+            $('#node-input-outputProperty').typedInput({
+                default: 'msg',
+                types: ['msg', 'flow', 'global', 'str', 'jsonata', 'env'],
+            });
+        },
+    });
+</script>
+
+<script type="text/html" data-template-name="ollama">
+    <div class="form-row">
+        <label for="node-input-name">
+            <i class="fa fa-tag"></i>
+            Name
+        </label>
+        <input type="text" id="node-input-name" placeholder="Name" />
+    </div>
+    <div class="form-row">
+        <label for="node-input-host">
+            <i class="fa fa-globe"></i>
+            Host
+        </label>
+        <input type="text" id="node-input-host" placeholder="http://localhost:11434" />
+    </div>
+    <div class="form-row">
+        <label for="node-input-model">
+            <i class="fa fa-cube"></i>
+            Model
+        </label>
+        <input type="text" id="node-input-model" placeholder="llama3" />
+    </div>
+    <div class="form-row">
+        <label for="node-input-inputProperty">
+            <i class="fa fa-sign-in"></i>
+            Input Data
+        </label>
+        <input type="text" id="node-input-inputProperty" />
+    </div>
+    <div class="form-row">
+        <label for="node-input-promptTemplate">
+            <i class="fa fa-terminal"></i>
+            System Prompt
+        </label>
+        <textarea
+            id="node-input-promptTemplate"
+            rows="5"
+            style="width:100%"
+            placeholder="Analyze this text and extract..."
+        ></textarea>
+    </div>
+    <div class="form-row">
+        <label for="node-input-outputProperty">
+            <i class="fa fa-sign-out"></i>
+            Output To
+        </label>
+        <input type="text" id="node-input-outputProperty" />
+    </div>
+</script>
+
+<script type="text/markdown" data-help-name="ollama">
+    A node to execute prompts against a local Ollama instance.
+
+    ### Properties
+
+    - **Host** _string_\
+      The URL to your Ollama API (e.g., `http://localhost:11434`).
+
+    - **Model** _string_\
+      The name of the downloaded model to use (e.g., `llama3`, `mistral`).
+
+    - **Input Data** _msg property_\
+      The `msg` property containing the data to append to your prompt.
+
+    - **System Prompt** _string_\
+      The instructions prepended to the input data before sending to Ollama.
+
+    - **Output To** _msg property_\
+      The `msg` property where the AI's response will be written.
+</script>
