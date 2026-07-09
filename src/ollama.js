@@ -1,4 +1,6 @@
 module.exports = function (RED) {
+    const { extendNode } = require('@faigle/node-red-runtime-utils')(RED);
+
     function OllamaNode(config) {
         RED.nodes.createNode(this, config);
         this.name = config.name;
@@ -6,15 +8,23 @@ module.exports = function (RED) {
         this.model = config.model;
         this.promptTemplate = config.promptTemplate;
         this.inputProperty = config.inputProperty;
+        this.inputPropertyType = config.inputPropertyType || 'msg';
         this.outputProperty = config.outputProperty;
+        this.outputPropertyType = config.outputPropertyType || 'msg';
 
         var node = this;
 
-        node.on('input', async function (msg, send, done) {
-            node.status({ fill: 'blue', shape: 'dot', text: 'requesting...' });
+        extendNode(node);
 
+        node.on('input', async function (msg, send, done) {
             try {
-                const inputData = RED.util.getMessageProperty(msg, node.inputProperty);
+                node.status.processing('requesting...');
+
+                const inputData = await node.getTypedProperty(
+                    node.inputProperty,
+                    node.inputPropertyType,
+                    msg,
+                );
 
                 const finalPrompt = node.promptTemplate
                     ? `${node.promptTemplate}\n\n${inputData}`
@@ -38,23 +48,27 @@ module.exports = function (RED) {
 
                 const data = await response.json();
 
-                RED.util.setMessageProperty(msg, node.outputProperty, data.response);
+                await node.setTypedProperty(
+                    node.outputProperty,
+                    node.outputPropertyType,
+                    msg,
+                    data.response,
+                );
 
-                node.status({ fill: 'green', shape: 'dot', text: 'success' });
+                node.status.succeeded('success');
 
                 send(msg);
 
                 if (done) done();
             } catch (err) {
-                node.status({ fill: 'red', shape: 'ring', text: 'error' });
+                node.status.failed(err.message || 'error');
+
                 if (done) {
                     done(err);
                 } else {
                     node.error(err, msg);
                 }
             }
-
-            setTimeout(() => node.status({}), 5000);
         });
     }
 
