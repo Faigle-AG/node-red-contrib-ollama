@@ -1,6 +1,6 @@
 {
   "name": "@faigle/node-red-contrib-ollama",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Ollama integration node for Node-Red",
   "keywords": [
     "node-red",
@@ -40,7 +40,8 @@
     "prepare": "npx --yes husky",
     "test": "mocha \"test/**/*_spec.js\"",
     "format": "prettier --write \"**/*.{js,html,md}\"",
-    "lint": "eslint \"**/*.{js,html}\""
+    "lint": "eslint \"**/*.{js,html}\"",
+    "format:check": "prettier --check \"**/*.{js,html,md}\""
   },
   "lint-staged": {
     "*.{js,html,md}": "prettier --write",
