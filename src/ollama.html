@@ -1,7 +1,7 @@
 <script type="text/javascript">
     RED.nodes.registerType('ollama', {
         category: 'ai processing',
-        color: '#a6bbcf',
+        color: '#9FA8DA',
         defaults: {
             name: { value: '' },
             host: { value: 'http://localhost:11434', required: true },
@@ -47,105 +47,80 @@
     });
 </script>
 
-<style>
-    fieldset.node-red-fieldset {
-        border: 1px solid var(--red-ui-form-input-border-color, #ccc) !important;
-        padding: 12px !important;
-        margin-bottom: 12px !important;
-        border-radius: 4px !important;
-    }
-
-    fieldset.node-red-fieldset legend {
-        border-bottom: none !important;
-        width: auto !important;
-        padding: 0 5px !important;
-        font-size: 13px !important;
-        font-weight: bold !important;
-        color: var(--red-ui-primary-text-color, #555) !important;
-        margin-bottom: 0 !important;
-    }
-
-    .input-width-70 {
-        width: 70% !important;
-    }
-</style>
+<link rel="stylesheet" href="resources/@faigle/node-red-runtime-utils/editor.css" />
 
 <script type="text/html" data-template-name="ollama">
-    <div class="form-row">
-        <label for="node-input-name">
-            <i class="fa fa-tag"></i>
-            Name
-        </label>
-        <input type="text" id="node-input-name" class="input-width-70" placeholder="Name" />
-    </div>
+    <div class="faigle-node-editor">
+        <div class="form-row">
+            <label for="node-input-name">
+                <i class="fa fa-tag"></i>
+                Name
+            </label>
+            <input type="text" id="node-input-name" placeholder="Name" />
+        </div>
 
-    <fieldset class="node-red-fieldset">
-        <legend>
-            <i class="fa fa-server"></i>
-            Connection
-        </legend>
-        <div class="form-row">
-            <label for="node-input-host">
-                <i class="fa fa-globe"></i>
-                Host
-            </label>
-            <input
-                type="text"
-                id="node-input-host"
-                class="input-width-70"
-                placeholder="http://localhost:11434"
-            />
-        </div>
-        <div class="form-row">
-            <label for="node-input-model">
-                <i class="fa fa-cube"></i>
-                Model
-            </label>
-            <input type="text" id="node-input-model" class="input-width-70" placeholder="llama3" />
-        </div>
-    </fieldset>
+        <fieldset class="node-red-fieldset">
+            <legend>
+                <i class="fa fa-server"></i>
+                Connection
+            </legend>
+            <div class="form-row">
+                <label for="node-input-host">
+                    <i class="fa fa-globe"></i>
+                    Host
+                </label>
+                <input type="text" id="node-input-host" placeholder="http://localhost:11434" />
+            </div>
+            <div class="form-row">
+                <label for="node-input-model">
+                    <i class="fa fa-cube"></i>
+                    Model
+                </label>
+                <input type="text" id="node-input-model" placeholder="llama3" />
+            </div>
+        </fieldset>
 
-    <fieldset class="node-red-fieldset">
-        <legend>
-            <i class="fa fa-commenting-o"></i>
-            Prompting
-        </legend>
-        <div class="form-row">
-            <label for="node-input-promptTemplate">
-                <i class="fa fa-terminal"></i>
-                System Prompt
-            </label>
-            <textarea
-                id="node-input-promptTemplate"
-                class="input-width-70"
-                rows="5"
-                placeholder="Analyze this text and extract..."
-            ></textarea>
-        </div>
-        <div class="form-row">
-            <label for="node-input-inputProperty">
-                <i class="fa fa-sign-in"></i>
-                Input Data
-            </label>
-            <input type="text" id="node-input-inputProperty" class="input-width-70" />
-            <input type="hidden" id="node-input-inputPropertyType" />
-        </div>
-    </fieldset>
+        <fieldset class="node-red-fieldset">
+            <legend>
+                <i class="fa fa-commenting-o"></i>
+                Prompting
+            </legend>
+            <div class="form-row">
+                <label for="node-input-promptTemplate">
+                    <i class="fa fa-terminal"></i>
+                    System Prompt
+                </label>
+                <textarea
+                    id="node-input-promptTemplate"
+                    rows="5"
+                    placeholder="Analyze this text and extract..."
+                ></textarea>
+            </div>
+            <div class="form-row">
+                <label for="node-input-inputProperty">
+                    <i class="fa fa-sign-in"></i>
+                    Input Data
+                </label>
+                <input type="text" id="node-input-inputProperty" />
+                <input type="hidden" id="node-input-inputPropertyType" />
+            </div>
+        </fieldset>
 
-    <fieldset class="node-red-fieldset">
-        <legend>
-            <i class="fa fa-sign-out"></i>
-            Output
-        </legend>
-        <div class="form-row">
-            <label for="node-input-outputProperty">
+        <fieldset class="node-red-fieldset">
+            <legend>
                 <i class="fa fa-sign-out"></i>
-                Output To
-            </label>
-            <input type="text" id="node-input-outputProperty" class="input-width-70" />
-            <input type="hidden" id="node-input-outputPropertyType" />
-        </div>
-    </fieldset>
+                Output
+            </legend>
+            <div class="form-row">
+                <label for="node-input-outputProperty">
+                    <i class="fa fa-sign-out"></i>
+                    Output To
+                </label>
+                <input type="text" id="node-input-outputProperty" />
+                <input type="hidden" id="node-input-outputPropertyType" />
+            </div>
+        </fieldset>
+    </div>
 </script>
 
 <!-- @formatter:off -->
@@ -169,5 +144,15 @@ A node to execute prompts against a local Ollama instance.
 
 - **Output To** _msg | flow | global_\
   The destination property where the AI's response will be written.
+
+### Errors
+
+Failures go to Catch nodes as `msg.error`, with `msg.error.code` when available; nothing is sent on the output.
+
+- `HOST_MISSING`, `MODEL_MISSING`: incomplete configuration.
+- `HTTP_ERROR`: Ollama answered with a non-2xx status (`msg.error.cause.status`). The status shows `API error: <reason>`.
+- Network errors, for example a refused connection, are passed through.
+
+Requests still running when the flow is stopped or redeployed are aborted and send nothing.
 </script>
 <!-- @formatter:on -->

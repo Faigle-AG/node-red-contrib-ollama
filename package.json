@@ -1,6 +1,6 @@
 {
   "name": "@faigle/node-red-contrib-ollama",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "Ollama integration node for Node-Red",
   "keywords": [
     "node-red",
@@ -9,6 +9,11 @@
   ],
   "private": false,
   "license": "MIT",
+  "files": [
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
   "node-red": {
     "nodes": {
       "ollama": "src/ollama.js"
@@ -31,7 +36,7 @@
     "prettier": "^3.9.4"
   },
   "dependencies": {
-    "@faigle/node-red-runtime-utils": "^0.4.2"
+    "@faigle/node-red-runtime-utils": "^0.6.7"
   },
   "workspaces": [
     "../../node-red-runtime/*"
