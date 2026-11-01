@@ -1,3 +1,10 @@
+// The types each typed field offers in the editor (Phase 2.9). A configured type outside these
+// fails clearly before anything is evaluated or requested.
+const TYPES = {
+    inputProperty: ['msg', 'flow', 'global', 'str', 'jsonata', 'env'],
+    outputProperty: ['msg', 'flow', 'global'],
+};
+
 module.exports = function (RED) {
     const { extendNode } = require('@faigle/node-red-runtime-utils')(RED);
 
@@ -46,6 +53,15 @@ module.exports = function (RED) {
             try {
                 if (!node.host) throw createError('Ollama host is missing', 'HOST_MISSING');
                 if (!node.model) throw createError('Ollama model is missing', 'MODEL_MISSING');
+                if (!TYPES.inputProperty.includes(node.inputPropertyType)) {
+                    throw createError(
+                        `Input data type '${node.inputPropertyType}' is not supported`,
+                        'INVALID_CONFIGURATION',
+                    );
+                }
+                if (!TYPES.outputProperty.includes(node.outputPropertyType)) {
+                    throw new Error(`Unsupported target property type: ${node.outputPropertyType}`);
+                }
 
                 node.status.processing('requesting...');
 
@@ -121,3 +137,5 @@ module.exports = function (RED) {
 
     RED.nodes.registerType('ollama', OllamaNode);
 };
+
+module.exports.TYPES = TYPES;

@@ -130,6 +130,21 @@ Default:
 msg.payload
 ```
 
+## Typed Fields and Compatibility
+
+The editor offers these types in this order; both fields are checked on every input after the existing host/model checks and before typed evaluation or a request.
+
+| Field            | Offered types                                    | New-node value / type |
+| ---------------- | ------------------------------------------------ | --------------------- |
+| `inputProperty`  | `msg`, `flow`, `global`, `str`, `jsonata`, `env` | `payload` / `msg`     |
+| `outputProperty` | `msg`, `flow`, `global`                          | `payload` / `msg`     |
+
+The offered types and saved field names are unchanged. Missing or falsy type tags still fall back to `msg`; this does not fill in missing property names. An absent/falsy input expression resolves to an empty string, and a missing output name remains a setter error after a successful response. Configure both names explicitly rather than treating editor defaults as a runtime migration.
+
+An unsupported input tag reports `INVALID_CONFIGURATION` with `Input data type '<type>' is not supported`. An unsupported output tag retains the uncoded `Unsupported target property type: <type>` message, now before input evaluation or a request. Imported or hand-edited flows using unadvertised types may now be rejected; other value, prompt and response handling is unchanged.
+
+For `flow` or `global`, Node-RED supports `#:(store)::key` for a named context store where configured. Store availability and persistence depend on the Node-RED context configuration.
+
 ## Input
 
 The incoming message triggers a request to Ollama. Use a nonempty string for a portable text-in/text-out flow.
@@ -262,6 +277,7 @@ Failures report through Node-RED Catch handling rather than a success output. Ex
 
 - `HOST_MISSING` — host is missing.
 - `MODEL_MISSING` — model is missing.
+- `INVALID_CONFIGURATION` — the active input type tag is not offered by the editor.
 - `HTTP_ERROR` — Ollama returned a non-2xx status; `msg.error.cause.status` contains the HTTP status and the message remains `API error: <statusText>`.
 
 Network, JSON-parsing and typed-property errors retain their original errors and may have no code. Status text uses the error message, not the new code. Treat model output and provider error content as untrusted, and redact sensitive data before forwarding errors or logs. The node has no authentication settings; protect remote Ollama access with appropriate network/transport controls.
